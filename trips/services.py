@@ -1,6 +1,9 @@
 import requests
+import logging
 from django.conf import settings
 from rest_framework import status
+
+logger = logging.getLogger(__name__)
 
 
 class ArtInstituteService:
@@ -23,15 +26,19 @@ class ArtInstituteService:
         :return: True if the artwork exists, False otherwise.
         """
         try:
+            logger.info(f"Checking if artwork {artwork_id} exists in the Art Institute system.")
             url = f"{self.BASE_URL}/artworks/{artwork_id}"
             params = {"fields": "id,title"}
 
             response = self.session.get(url, params=params, timeout=5)
 
             if response.status_code == status.HTTP_200_OK:
+                logger.info(f"Artwork {artwork_id} exists in the Art Institute system.")
                 return True
+            logger.error(f"Artwork {artwork_id} does not exist in the Art Institute system.")
             return False
         except requests.RequestException:
+            logger.error(f"Error checking if artwork {artwork_id} exists in the Art Institute system.")
             return False
 
     def get_artwork_details(self, artwork_id: str) -> dict | None:
@@ -43,7 +50,12 @@ class ArtInstituteService:
         :return: The details of the artwork.
         """
         url = f"{self.BASE_URL}/artworks/{artwork_id}"
+        logger.info(f"Getting details for artwork {artwork_id} from the Art Institute system.")
+
         response = self.session.get(url, timeout=5)
         if response.status_code == 200:
+            logger.info(f"Details for artwork {artwork_id} found in the Art Institute system.")
             return response.json().get('data')
+
+        logger.error(f"Error getting details for artwork {artwork_id} from the Art Institute system.")
         return None
