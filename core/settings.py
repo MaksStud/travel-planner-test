@@ -143,3 +143,5 @@ SPECTACULAR_SETTINGS = {
 STATIC_URL = 'static/'
 
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+
+ART_INSTITUTE_URL = os.getenv('ART_INSTITUTE_URL', 'https://api.artic.edu/api/v1')
