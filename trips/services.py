@@ -8,7 +8,13 @@ logger = logging.getLogger(__name__)
 
 class ArtInstituteService:
     """Art Institute service."""
-    def __init__(self):
+
+    def __init__(self) -> None:
+        """
+        Initialize API client session for Art Institute service.
+
+        :return: None.
+        """
         self.BASE_URL = settings.ART_INSTITUTE_URL
         self.session = requests.Session()
         self.session.headers.update({

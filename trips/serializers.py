@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from typing import Any
 from trips.models import Project, Place
 from trips.services import ArtInstituteService
 
@@ -9,7 +10,7 @@ class PlaceSerializer(serializers.ModelSerializer):
         model = Place
         fields = ['id', 'external_id', 'notes', 'is_visited']
 
-    def validate_external_id(self, value):
+    def validate_external_id(self, value: str) -> str:
         """
         Validate external ID.
 
@@ -32,7 +33,7 @@ class ProjectSerializer(serializers.ModelSerializer):
         fields = ['id', 'name', 'description', 'start_date', 'is_completed', 'places']
         read_only_fields = ['is_completed']
 
-    def create(self, validated_data):
+    def create(self, validated_data: dict[str, Any]) -> Project:
         """
         Create project.
 

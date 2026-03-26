@@ -1,5 +1,6 @@
 from django.db import models
 from rest_framework.serializers import ValidationError
+from typing import Any
 
 
 class Project(models.Model):
@@ -12,13 +13,20 @@ class Project(models.Model):
     class Meta:
         ordering = ['-start_date', '-id']
 
-    def delete(self, *args, **kwargs):
-        """Delete project."""
+    def delete(self, *args: Any, **kwargs: Any) -> tuple[int, dict[str, int]]:
+        """
+        Delete the project instance.
+
+        :param args: Positional arguments passed to the model delete operation.
+        :param kwargs: Keyword arguments passed to the model delete operation.
+        :return: Tuple with deleted objects count and per-model breakdown.
+        :raises ValidationError: If the project has at least one visited place.
+        """
         if self.places.filter(is_visited=True).exists():
             raise ValidationError("Cannot delete project: some places are already visited.")
         return super().delete(*args, **kwargs)
 
-    def sync_status(self):
+    def sync_status(self) -> None:
         """
         Sync project status.
 
@@ -36,7 +44,12 @@ class Project(models.Model):
                 self.is_completed = False
                 self.save(update_fields=['is_completed'])
 
-    def __str__(self):
+    def __str__(self) -> str:
+        """
+        Return project display name.
+
+        :return: Project name.
+        """
         return self.name
 
 
@@ -50,14 +63,31 @@ class Place(models.Model):
     class Meta:
         unique_together = ('external_id', 'project')
 
-    def clean(self):
+    def clean(self) -> None:
+        """
+        Validate place constraints.
+
+        :raises ValidationError: If a project exceeds the 10 places limit.
+        """
         if not self.pk and self.project.places.count() >= 10:
             raise ValidationError("Maximum 10 places per project allowed.")
 
-    def save(self, *args, **kwargs):
+    def save(self, *args: Any, **kwargs: Any) -> None:
+        """
+        Persist place and synchronize parent project status.
+
+        :param args: Positional arguments passed to the model save operation.
+        :param kwargs: Keyword arguments passed to the model save operation.
+        :return: None.
+        """
         self.full_clean()
         super().save(*args, **kwargs)
         self.project.sync_status()
 
-    def __str__(self):
+    def __str__(self) -> str:
+        """
+        Return place display name.
+
+        :return: Formatted external ID and project name.
+        """
         return f"{self.external_id} ({self.project.name})"
