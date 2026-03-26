@@ -1,5 +1,5 @@
 from rest_framework.routers import DefaultRouter
-from .views import ProjectViewSet, PlaceViewSet
+from trips.views import ProjectViewSet, PlaceViewSet
 
 router = DefaultRouter()
 router.register(r'projects', ProjectViewSet, basename='project')

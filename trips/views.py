@@ -1,7 +1,7 @@
 from rest_framework import viewsets, serializers
 from django_filters.rest_framework import DjangoFilterBackend
-from .models import Project, Place
-from .serializers import ProjectSerializer, PlaceSerializer
+from trips.models import Project, Place
+from trips.serializers import ProjectSerializer, PlaceSerializer
 
 
 class ProjectViewSet(viewsets.ModelViewSet):
