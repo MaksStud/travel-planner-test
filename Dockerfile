@@ -5,11 +5,11 @@ ENV PYTHONUNBUFFERED 1
 
 WORKDIR /app
 
-RUN apt-get update && apt-get install -y libpq-dev gcc && rm -rf /var/lib/apt/lists/*
+COPY requirements.txt /app/
 
-COPY requirements.txt .
+RUN apt-get update; \
+    apt-get install -y gettext;
+
 RUN pip install --no-cache-dir -r requirements.txt
 
-COPY . .
-
-EXPOSE 8000
+COPY . /app/
